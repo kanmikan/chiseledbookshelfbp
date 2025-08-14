@@ -69,7 +69,7 @@ public class ChiseledBookshelf extends BlockContainer {
         if (!clickedFront) return false;
 
         //slots
-        int col = (int) (hitX * 3);
+        int col = 2 - (int) (hitX * 3);
         int row = 1 - (int) (hitY * 2);
 
         if (col < 0) col = 0;
@@ -103,7 +103,7 @@ public class ChiseledBookshelf extends BlockContainer {
             }
             return true;
 
-        } else if (held != null && isBookItem(held)) {
+        } else if (held != null && TileEntityChiseledBookshelf.isBookItem(held)) {
             if (!world.isRemote) {
                 bookshelf.setBookInSlot(slot, held.splitStack(1).copy());
                 bookshelf.lastInteractedSlot = slot;
@@ -114,10 +114,6 @@ public class ChiseledBookshelf extends BlockContainer {
             return true;
         }
         return false;
-    }
-
-    private boolean isBookItem(ItemStack stack) {
-        return stack.getItem() == Items.book || stack.getItem() == Items.writable_book || stack.getItem() == Items.written_book;
     }
 
     @Override
@@ -164,10 +160,11 @@ public class ChiseledBookshelf extends BlockContainer {
     //no se si es este o isProvidingStrongPower
     @Override
     public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side) {
-        TileEntity tile = world.getTileEntity(x, y, z);
-        if (tile instanceof TileEntityChiseledBookshelf) {
-            int slot = ((TileEntityChiseledBookshelf) tile).lastInteractedSlot;
-            return slot >= 0 ? (slot + 1) : 0;
+        //el común devuelve cuantos libros hay
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (te instanceof TileEntityChiseledBookshelf) {
+            TileEntityChiseledBookshelf shelf = (TileEntityChiseledBookshelf) te;
+            return shelf.getSlotCount(); // de 0 a 6
         }
         return 0;
     }
@@ -179,14 +176,12 @@ public class ChiseledBookshelf extends BlockContainer {
 
     @Override
     public int getComparatorInputOverride(World world, int x, int y, int z, int side) {
-        TileEntity te = world.getTileEntity(x, y, z);
-        if (te instanceof TileEntityChiseledBookshelf) {
-            TileEntityChiseledBookshelf shelf = (TileEntityChiseledBookshelf) te;
-            int filled = 0;
-            for (int i = 0; i < 6; i++) {
-                if (shelf.hasBookInSlot(i)) filled++;
-            }
-            return filled; // de 0 a 6
+        //el comparador devuelve el último slot usado
+        TileEntity tile = world.getTileEntity(x, y, z);
+        if (tile instanceof TileEntityChiseledBookshelf) {
+            int count = ((TileEntityChiseledBookshelf) tile).getSlotCount();
+            int slot = ((TileEntityChiseledBookshelf) tile).lastInteractedSlot;
+            return (count > 0) ? slot+1 : 0;
         }
         return 0;
     }

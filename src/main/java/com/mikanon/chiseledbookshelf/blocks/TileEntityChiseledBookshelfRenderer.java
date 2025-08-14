@@ -56,7 +56,7 @@ public class TileEntityChiseledBookshelfRenderer extends TileEntitySpecialRender
                 int row = i / 3;
                 int columnIndex = 2 - col;
                 
-                float u1Tex = BORDER + columnIndex * (BOOKW + HORIZONTAL_SPACING);
+                float u1Tex = BORDER + col * (BOOKW + HORIZONTAL_SPACING);
                 float u2Tex = u1Tex + BOOKW;
                 float v1Tex = BORDER + row * (BOOKH + VERTICAL_SPACING);
                 float v2Tex = v1Tex + BOOKH;
@@ -66,7 +66,7 @@ public class TileEntityChiseledBookshelfRenderer extends TileEntitySpecialRender
                 float v1 = v1Tex * PIXEL_UNIT;
                 float v2 = v2Tex * PIXEL_UNIT;
 
-                float startX = BORDER * PIXEL_UNIT + col * (BOOKW + HORIZONTAL_SPACING) * PIXEL_UNIT;
+                float startX = BORDER * PIXEL_UNIT + columnIndex * (BOOKW + HORIZONTAL_SPACING) * PIXEL_UNIT;
                 float endX = startX + BOOKW * PIXEL_UNIT;
                 float offsetY = BORDER + row * (BOOKH + VERTICAL_SPACING);
                 float topY = 1.0F - (offsetY * PIXEL_UNIT);
