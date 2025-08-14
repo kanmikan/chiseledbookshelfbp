@@ -1,0 +1,16 @@
+[
+{
+  "modid": "chiseledbookshelf",
+  "name": "Chiseled Bookshelf Backport",
+  "description": "Chiseled bookshelf para minecraft 1.7.10",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["mikanon"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
