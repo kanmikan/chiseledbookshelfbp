@@ -157,17 +157,17 @@ public class ChiseledBookshelf extends BlockContainer {
         return true;
     }
 
-    //no se si es este o isProvidingStrongPower
+    /* interfiere los hoppers, no vanilla.
     @Override
     public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side) {
-        //el común devuelve cuantos libros hay
         TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof TileEntityChiseledBookshelf) {
             TileEntityChiseledBookshelf shelf = (TileEntityChiseledBookshelf) te;
-            return shelf.getSlotCount(); // de 0 a 6
+            return shelf.getSlotCount();
         }
         return 0;
     }
+    */
 
     @Override
     public boolean hasComparatorInputOverride() {

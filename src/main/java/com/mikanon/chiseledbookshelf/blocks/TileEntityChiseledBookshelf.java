@@ -27,11 +27,6 @@ public class TileEntityChiseledBookshelf extends TileEntity implements ISidedInv
     public void setBookInSlot(int index, ItemStack stack) {
         if (index < 0 || index >= bookSlots.length) return;
         bookSlots[index] = stack;
-        markDirty();
-        if (this.worldObj != null && !this.worldObj.isRemote) {
-            this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-            //this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.getBlockType());
-        }
     }
 
     public boolean hasBookInSlot(int index) {
@@ -75,6 +70,9 @@ public class TileEntityChiseledBookshelf extends TileEntity implements ISidedInv
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
+
+        for (int i = 0; i < bookSlots.length; i++) { bookSlots[i] = null; }
+
         NBTTagList list = tag.getTagList("Books", 10);
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound slotTag = list.getCompoundTagAt(i);
@@ -122,6 +120,15 @@ public class TileEntityChiseledBookshelf extends TileEntity implements ISidedInv
         return getBookInSlot(i);
     }
 
+    @Override
+    public void markDirty() {
+        super.markDirty();
+        if (this.worldObj != null) {
+            this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
+            //this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.getBlockType());
+        }
+    }
+
     public ItemStack decrStackSize(int index, int count) {
         ItemStack stack = getStackInSlot(index);
         if (stack != null) {
@@ -136,9 +143,6 @@ public class TileEntityChiseledBookshelf extends TileEntity implements ISidedInv
                 }
             }
             markDirty();
-            if (this.worldObj != null && !this.worldObj.isRemote) {
-                this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-            }
             return removedStack;
         }
         return null;
@@ -150,6 +154,7 @@ public class TileEntityChiseledBookshelf extends TileEntity implements ISidedInv
         if (stack != null) {
             setInventorySlotContents(index, null);
         }
+        markDirty();
         return stack;
     }
 
@@ -158,14 +163,14 @@ public class TileEntityChiseledBookshelf extends TileEntity implements ISidedInv
         if (index < 0 || index >= bookSlots.length) {
             return;
         }
+        ItemStack prevStack = bookSlots[index];
         bookSlots[index] = stack;
         if (stack != null && stack.stackSize > this.getInventoryStackLimit()) {
             stack.stackSize = this.getInventoryStackLimit();
         }
-        markDirty(); //sync
-        if (this.worldObj != null && !this.worldObj.isRemote) {
-            this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-            //this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.getBlockType());
+
+        if (!ItemStack.areItemStacksEqual(prevStack, stack)) {
+            markDirty();
         }
     }
 
@@ -204,7 +209,6 @@ public class TileEntityChiseledBookshelf extends TileEntity implements ISidedInv
         return stack.getItem() == Items.book || stack.getItem() == Items.enchanted_book || stack.getItem() == Items.writable_book || stack.getItem() == Items.written_book;
     }
 
-    //hoppers (broken)
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
         return new int[]{0, 1, 2, 3, 4, 5};
@@ -219,4 +223,5 @@ public class TileEntityChiseledBookshelf extends TileEntity implements ISidedInv
     public boolean canExtractItem(int index, ItemStack stack, int side) {
         return this.hasBookInSlot(index);
     }
+
 }
